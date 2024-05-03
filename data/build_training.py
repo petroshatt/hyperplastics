@@ -72,8 +72,8 @@ def construct_pet_training_set():
     Build PET training set
     :return: An ndarray with all samples selected for PET training class
     """
-    pet_img1 = open_image('../../../RU/data/Plastic Types - 224 Training Set/PET1_2024-03-22_10-14-10/capture/'
-                          'PET1_2024-03-22_10-14-10.hdr')
+    pet_img1 = open_image(
+        '../../../RU/data/Plastic Types - 224 Training Set/PET1_2024-03-22_10-14-10/capture/PET1_2024-03-22_10-14-10.hdr')
     pet1 = pet_img1[:, :, :]
 
     pet_areas = [pet1[830:890, 290:350, 40:180], pet1[1140:1180, 380:490, 40:180]]
@@ -95,8 +95,8 @@ def construct_pvc_training_set():
     Build PVC training set
     :return: An ndarray with all samples selected for PVC training class
     """
-    pvc_img1 = open_image('../../../RU/data/Plastic Types - 224 Training Set/PVC1_2024-03-22_10-48-29/capture/'
-                          'PVC1_2024-03-22_10-48-29.hdr')
+    pvc_img1 = open_image(
+        '../../../RU/data/Plastic Types - 224 Training Set/PVC1_2024-03-22_10-48-29/capture/PVC1_2024-03-22_10-48-29.hdr')
     pvc1 = pvc_img1[:, :, :]
 
     pvc_areas = [pvc1[1300:1370, 140:200, 40:180], pvc1[860:930, 320:380, 40:180],
@@ -265,11 +265,11 @@ def get_random_pixels(array_2D, n):
     return result
 
 
-classes = ['PP', 'PE', 'PET', 'PVC']
+classes = ['UNCL', 'PP', 'PE', 'PET', 'PVC']
 Xs = construct_Xs(classes)
 ys = construct_ys(Xs)
 
 X_train = np.concatenate(Xs)
 y_train = np.concatenate(ys)
-np.save('../training_set/X_train', X_train)
-np.save('../training_set/y_train', y_train)
+np.save('X_train', X_train)
+np.save('y_train', y_train)

@@ -5,6 +5,7 @@ from spectral import *
 from sklearn.svm import SVC
 
 from preprocessing import *
+from plot import *
 
 
 if __name__ == '__main__':
@@ -12,14 +13,20 @@ if __name__ == '__main__':
                         'capture/PP_film_2024-03-26_07-34-06.hdr')
     wavelengths = wl_img.metadata['wavelength'][40:180]
 
-    X_train = np.load('training_set/X_train.npy')
-    y_train = np.load('training_set/y_train.npy')
+    X_train = np.load('data/X_train.npy')
+    y_train = np.load('data/y_train.npy')
     X_train = pd.DataFrame(data=X_train, index=range(1, X_train.shape[0] + 1), columns=wavelengths)
     y_train = pd.DataFrame(data=y_train, index=range(1, y_train.shape[0] + 1), columns=['Class'])
 
-    X_train = savgol(X_train)
+    X_train = savgol(X_train, window_length=5, polyorder=2, deriv=1)
     X_train = area_normalization(X_train)
+
+    plot_spectra(X_train[::20, :], wavelengths)
 
     clf = SVC(gamma='auto')
     clf.fit(X_train, y_train.values.ravel())
     print("SVC Fitting Completed!")
+
+
+
+

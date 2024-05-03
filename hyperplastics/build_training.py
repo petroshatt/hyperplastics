@@ -271,6 +271,5 @@ ys = construct_ys(Xs)
 
 X_train = np.concatenate(Xs)
 y_train = np.concatenate(ys)
-
 np.save('../training_set/X_train', X_train)
 np.save('../training_set/y_train', y_train)

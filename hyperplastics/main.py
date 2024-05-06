@@ -17,7 +17,7 @@ if __name__ == '__main__':
     X_train = np.load('data/X_train.npy')
     y_train = np.load('data/y_train.npy')
 
-    X_train = savgol(X_train, window_length=5, polyorder=2, deriv=1)
+    X_train = savgol(X_train)
     X_train = area_normalization(X_train)
 
     X_train = pd.DataFrame(data=X_train, index=range(1, X_train.shape[0] + 1), columns=wavelengths)
@@ -28,11 +28,10 @@ if __name__ == '__main__':
     print("SVC Fitting Completed!")
 
     test_img = np.load('data/test_img.npy')
-    test_img = test_img[400:1000:5, 400:1000:5, :]
+    test_img = test_img[::10, ::10, :]
     initial_shape = test_img.shape
 
     test_img = neighbouring_summation(test_img)
-    plot_mean_image(test_img)
 
     X_test = reshape_3D_to_2D(test_img)
 
@@ -44,4 +43,4 @@ if __name__ == '__main__':
     unique, counts = np.unique(y_pred, return_counts=True)
     print(dict(zip(unique, counts)))
 
-    plot_predictions(y_pred, initial_shape)
+    plot_predictions(y_pred, initial_shape, title='5x5 NS + SG + AreaNorm / SVC Predictions')

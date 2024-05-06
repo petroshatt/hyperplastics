@@ -235,7 +235,7 @@ def remove_high_intensity(array_2D, threshold):
     return filtered_data
 
 
-def sum_training(X, window_size=9, shuffle=True):
+def sum_training(X, window_size=25, shuffle=True):
     """
     Performs summation on the training, so they can correspond to the neighbouring summation of the test set
     :param X: The X of the training set to perform summation on

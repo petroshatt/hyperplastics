@@ -11,9 +11,14 @@ def neighbouring_summation(array_3D):
     :param array_3D: Original three-dimensional array before sum
     :return: Three-dimensional array after summing up the neighbors for each pixel
     """
-    kernel = np.array([[1, 1, 1],
-                       [1, 0, 1],
-                       [1, 1, 1]])
+    # kernel = np.array([[1, 1, 1],
+    #                    [1, 0, 1],
+    #                    [1, 1, 1]])
+    kernel = np.array([[1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1],
+                       [1, 1, 0, 1, 1],
+                       [1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1]])
 
     output = np.zeros_like(array_3D)
     for c in range(array_3D.shape[2]):
@@ -57,10 +62,16 @@ def log_als(array_2D):
     :param array_2D: Two-dimensional array to be transformed
     :return: Transformed 2D array
     """
-    return np.apply_along_axis(log_als, 1, array_2D)
+    return np.apply_along_axis(log_als_1D, 1, array_2D).reshape(array_2D.shape)
 
 
 def wavelet_denoise_1D(array_1D, wavelet_levels=6):
+    """
+    skimage Wavelet Denoising function
+    :param array_1D: One-dimensional array to be transformed
+    :param wavelet_levels: The number of wavelet decomposition levels to use
+    :return: Transformed 1D array
+    """
     return denoise_wavelet(array_1D, wavelet='db1', mode='soft', wavelet_levels=wavelet_levels)
 
 
@@ -70,7 +81,7 @@ def wavelet_denoise(array_2D):
     :param array_2D: Two-dimensional array to be transformed
     :return: Transformed 2D array
     """
-    return np.apply_along_axis(wavelet_denoise, 1, array_2D)
+    return np.apply_along_axis(wavelet_denoise_1D, 1, array_2D)
 
 
 def min_max_normalization(array_2D):

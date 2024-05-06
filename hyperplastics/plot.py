@@ -46,36 +46,27 @@ def plot_mean_image(array_3D):
 
     plt.imshow(data_means, interpolation='nearest')
     plt.title('Mean Image')
-    plt.colorbar()
+    # plt.colorbar()
 
     plt.show()
 
 
-def plot_predictions(y_pred, initial_shape):
-    """
-    Plot predictions of the model, reshaping 1D to 2D and assigning a color to each class
-    :param y_pred: The predictions array returned by the model
-    :param initial_shape: The initial shape of the image so the predictions can be reshaped and plotted in 2D
-    :return: Nothing returned, predictions plot is shown
-    """
-    class_array = np.reshape(y_pred, (initial_shape[0], initial_shape[1]))
+def plot_predictions(y_pred, initial_shape, title='Predictions Plot'):
+    class_array = np.reshape(y_pred, initial_shape[:2])
     class_colors = {'PP': 'blue', 'PVC': 'green', 'PE': 'orange', 'PET': 'purple'}
 
-    plt.figure(figsize=(12, 12))
+    plt.figure(figsize=(16, 10))
 
-    for i in range(class_array.shape[0]):
-        for j in range(class_array.shape[1]):
-            if class_array[i, j] != 'UNCL':
-                plt.scatter(j, i, c=class_colors[class_array[i, j]])
+    mask = (class_array != 'UNCL')
+    rows, cols = np.where(mask)
+    colors = np.array([class_colors[class_array[r, c]] for r, c in zip(rows, cols)])
+    plt.scatter(cols, rows, c=colors)
 
-    # Reverse y-axis
     plt.gca().invert_yaxis()
 
-    # Create legend manually
-    legend_handles = []
-    for class_label, color in class_colors.items():
-        legend_handles.append(plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color,
-                                         markersize=10, label=class_label))
+    legend_handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color,
+                                 markersize=10, label=class_label) for class_label, color in class_colors.items()]
 
+    plt.title(str(title))
     plt.legend(handles=legend_handles)
     plt.show()

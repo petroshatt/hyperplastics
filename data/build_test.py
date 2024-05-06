@@ -50,4 +50,4 @@ def construct_microplastics_test():
 
 
 microp_img = construct_microplastics_test()
-np.save('X_test', microp_img)
+np.save('test_img', microp_img)

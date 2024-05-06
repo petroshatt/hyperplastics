@@ -115,7 +115,7 @@ def construct_pvc_training_set():
     return pvc_training
 
 
-def construct_Xs(classes=None, shuffle=False):
+def construct_Xs(classes=None, shuffle=True):
     """
     Constructs Xs of the training set
     :param classes: A list with strings of classes to include in training
@@ -170,16 +170,21 @@ def construct_Xs(classes=None, shuffle=False):
     return Xs
 
 
-def construct_ys(Xs):
+def construct_ys(Xs, classes=None):
     """
     Constructs ys of the training set
     :param Xs: The list construct_Xs returned, containing Xs of the training set
+    :param classes: A list with strings of classes to include in training
     :return: A list with ys corresponding to the Xs of the training set
     """
     ys = []
-    for X in Xs:
+    if classes is None:
+        classes = ['PP', 'PE', 'PET', 'PVC']
+
+    for i, X in enumerate(Xs):
         if X.shape[0] > 0:
-            y = np.full(X.shape[0], X[0, -1]).reshape(-1, 1)
+            class_label = classes[i]
+            y = np.full(X.shape[0], class_label).reshape(-1, 1)
             ys.append(y)
     return ys
 
@@ -267,7 +272,7 @@ def get_random_pixels(array_2D, n):
 
 classes = ['UNCL', 'PP', 'PE', 'PET', 'PVC']
 Xs = construct_Xs(classes)
-ys = construct_ys(Xs)
+ys = construct_ys(Xs, classes)
 
 X_train = np.concatenate(Xs)
 y_train = np.concatenate(ys)

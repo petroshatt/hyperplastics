@@ -4,21 +4,21 @@ from scipy.signal import savgol_filter, convolve2d
 from skimage.restoration import denoise_wavelet
 
 
-def neighbouring_summation(array_3D):
+def neighbouring_summation(array_3D, window_size=5):
     """
     [NEEDS TO BE TESTED (Optimized Version) - If not working, replace with function from Neighbors224]
     Function that applies neighbouring summation for each pixel of the original three-dimensional array
     :param array_3D: Original three-dimensional array before sum
+    :param window_size: The dimensions of the kernel window,
+                        height and width are always the same, must be an odd number
     :return: Three-dimensional array after summing up the neighbors for each pixel
     """
-    # kernel = np.array([[1, 1, 1],
-    #                    [1, 0, 1],
-    #                    [1, 1, 1]])
-    kernel = np.array([[1, 1, 1, 1, 1],
-                       [1, 1, 1, 1, 1],
-                       [1, 1, 0, 1, 1],
-                       [1, 1, 1, 1, 1],
-                       [1, 1, 1, 1, 1]])
+    if window_size % 2 == 0:
+        raise ValueError("Window size must be an odd number")
+
+    kernel = np.ones((window_size, window_size))
+    center = window_size // 2
+    kernel[center, center] = 0
 
     output = np.zeros_like(array_3D)
     for c in range(array_3D.shape[2]):

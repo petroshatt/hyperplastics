@@ -6,7 +6,6 @@ from skimage.restoration import denoise_wavelet
 
 def neighbouring_summation(array_3D, window_size=5):
     """
-    [NEEDS TO BE TESTED (Optimized Version) - If not working, replace with function from Neighbors224]
     Function that applies neighbouring summation for each pixel of the original three-dimensional array
     :param array_3D: Original three-dimensional array before sum
     :param window_size: The dimensions of the kernel window,

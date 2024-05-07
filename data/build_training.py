@@ -1,5 +1,18 @@
 import numpy as np
+from scipy.signal import savgol_filter
 from spectral import *
+
+
+def savgol(array, window_length=5, polyorder=2, deriv=1):
+    """
+    Savitzky-Golay filter
+    :param array: Array (can be one or two dimensions) for the filter to be applied
+    :param window_length: Window length
+    :param polyorder: Polynomial order
+    :param deriv: Derivative (1st or 2nd)
+    :return: Array after applying the filter
+    """
+    return savgol_filter(array, window_length=window_length, polyorder=polyorder, deriv=deriv)
 
 
 def construct_uncl_training_set():
@@ -130,6 +143,7 @@ def construct_Xs(classes=None, shuffle=True):
         X_uncl = construct_uncl_training_set()
         X_uncl = remove_high_intensity(X_uncl, 2100)
         X_uncl = remove_low_intensity(X_uncl, 300)
+        X_uncl = savgol(X_uncl)
         X_uncl = sum_training(X_uncl, shuffle=shuffle)
         Xs.append(X_uncl)
         print("UNCL Training Set shape: ", X_uncl.shape)
@@ -138,6 +152,7 @@ def construct_Xs(classes=None, shuffle=True):
         X_pp = construct_pp_training_set()
         X_pp = remove_high_intensity(X_pp, 2100)
         X_pp = remove_low_intensity(X_pp, 300)
+        X_pp = savgol(X_pp)
         X_pp = sum_training(X_pp, shuffle=shuffle)
         Xs.append(X_pp)
         print("PP Training Set shape: ", X_pp.shape)
@@ -146,6 +161,7 @@ def construct_Xs(classes=None, shuffle=True):
         X_pe = construct_pe_training_set()
         X_pe = remove_high_intensity(X_pe, 2200)
         X_pe = remove_low_intensity(X_pe, 300)
+        X_pe = savgol(X_pe)
         X_pe = sum_training(X_pe, shuffle=shuffle)
         Xs.append(X_pe)
         print("PE Training Set shape: ", X_pe.shape)
@@ -153,6 +169,7 @@ def construct_Xs(classes=None, shuffle=True):
     if 'PET' in classes:
         X_pet = construct_pet_training_set()
         X_pet = remove_low_intensity(X_pet, 300)
+        X_pet = savgol(X_pet)
         X_pet = sum_training(X_pet, shuffle=shuffle)
         Xs.append(X_pet)
         print("PET Training Set shape: ", X_pet.shape)
@@ -160,6 +177,7 @@ def construct_Xs(classes=None, shuffle=True):
     if 'PVC' in classes:
         X_pvc = construct_pvc_training_set()
         X_pvc = remove_low_intensity(X_pvc, 300)
+        X_pvc = savgol(X_pvc)
         X_pvc = sum_training(X_pvc, shuffle=shuffle)
         Xs.append(X_pvc)
         print("PVC Training Set shape: ", X_pvc.shape)

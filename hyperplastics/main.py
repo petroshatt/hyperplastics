@@ -17,7 +17,6 @@ if __name__ == '__main__':
     X_train = np.load('data/X_train.npy')
     y_train = np.load('data/y_train.npy')
 
-    X_train = savgol(X_train)
     X_train = area_normalization(X_train)
 
     X_train = pd.DataFrame(data=X_train, index=range(1, X_train.shape[0] + 1), columns=wavelengths)
@@ -34,9 +33,9 @@ if __name__ == '__main__':
     test_img = neighbouring_summation(test_img)
 
     X_test = reshape_3D_to_2D(test_img)
-
-    X_test = savgol(X_test)
+    X_test = savgol(X_test, window_length=5, polyorder=2, deriv=1)
     X_test = area_normalization(X_test)
+
     X_test = pd.DataFrame(data=X_test, index=range(1, X_test.shape[0] + 1), columns=wavelengths)
 
     y_pred = clf.predict(X_test.values)

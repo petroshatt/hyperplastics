@@ -1,4 +1,5 @@
-import seaborn as sns
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -30,7 +31,7 @@ def plot_spectra(array_2D, wavelengths, title='Spectra Plot'):
     plt.ylabel('Intensity')
     plt.title(str(title))
     plt.grid(True)
-
+    plt.legend()
     plt.show()
 
 
@@ -52,15 +53,22 @@ def plot_mean_image(array_3D):
 
 
 def plot_predictions(y_pred, initial_shape, title='Predictions Plot'):
+    """
+    Plot predictions of the model, reshaping 1D to 2D and assigning a color to each class
+    :param y_pred: The predictions array returned by the model
+    :param initial_shape: The initial shape of the image so the predictions can be reshaped and plotted in 2D
+    :param title: Plot title
+    :return: Nothing returned, predictions plot is shown
+    """
     class_array = np.reshape(y_pred, initial_shape[:2])
-    class_colors = {'PP': 'blue', 'PVC': 'green', 'PE': 'orange', 'PET': 'purple'}
+    class_colors = {'PP': '#6878c0', 'PVC': '#79b791', 'PE': '#ff9d5c', 'PET': '#b580c5'}
 
-    plt.figure(figsize=(16, 10))
+    fig, ax = plt.subplots(figsize=(16, 10))
 
     mask = (class_array != 'UNCL')
     rows, cols = np.where(mask)
     colors = np.array([class_colors[class_array[r, c]] for r, c in zip(rows, cols)])
-    plt.scatter(cols, rows, c=colors)
+    scatter = ax.scatter(cols, rows, c=colors)
 
     plt.gca().invert_yaxis()
 
@@ -69,4 +77,31 @@ def plot_predictions(y_pred, initial_shape, title='Predictions Plot'):
 
     plt.title(str(title))
     plt.legend(handles=legend_handles)
+
+    annot = ax.annotate("", xy=(0,0), xytext=(20,20), textcoords="offset points",
+                    bbox=dict(boxstyle="round", fc="w"),
+                    arrowprops=dict(arrowstyle="->"))
+    annot.set_visible(False)
+
+    def update_annot(event):
+        if event.inaxes == ax:
+            vis = annot.get_visible()
+            if event.inaxes == ax:
+                cont, ind = scatter.contains(event)
+                if cont:
+                    pos = scatter.get_offsets()[ind["ind"][0]]
+                    annot.xy = pos
+                    text = f"x: {cols[ind['ind'][0]]}, y: {rows[ind['ind'][0]]}"
+                    annot.set_text(text)
+                    annot.get_bbox_patch().set_facecolor(colors[ind["ind"][0]])
+                    annot.get_bbox_patch().set_alpha(0.4)
+                    annot.set_visible(True)
+                    fig.canvas.draw_idle()
+                else:
+                    if vis:
+                        annot.set_visible(False)
+                        fig.canvas.draw_idle()
+
+    fig.canvas.mpl_connect("motion_notify_event", update_annot)
+    plt.pause(0.01)
     plt.show()

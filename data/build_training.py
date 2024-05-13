@@ -20,17 +20,18 @@ def construct_uncl_training_set():
     Build Unclassified training set
     :return: An ndarray with all samples selected for UNCL training class
     """
-    uncl_img1 = open_image(
-        '../../../RU/data/meso_2024-04-12_08-32-22/capture/meso_2024-04-12_08-32-22.hdr')
+    uncl_img1 = open_image('../../../RU/data/meso_2024-04-12_08-32-22/capture/meso_2024-04-12_08-32-22.hdr')
     uncl1 = uncl_img1[:, :, :]
+    uncl_img2 = open_image('../../../RU/data/Glass_2024-05-07_13-30-40/capture/Glass_2024-05-07_13-30-40.hdr')
+    uncl2 = uncl_img2[::15, ::15, 40:180]
 
     uncl_areas = [uncl1[260:290, 290:320, 40:180], uncl1[145:180, 160:200, 40:180], uncl1[150:180, 495:520, 40:180],
-                uncl1[730:760, 495:515, 40:180], uncl1[105:125, 290:385, 40:180], uncl1[620:665, 410:430, 40:180]]
+                  uncl1[730:760, 495:515, 40:180], uncl1[105:125, 290:385, 40:180], uncl1[620:665, 410:430, 40:180],
+                  uncl2]
 
     reshaped_areas = [np.reshape(area, (area.shape[0] * area.shape[1], -1)) for area in uncl_areas]
     reshaped_uncl = np.concatenate(reshaped_areas, axis=0)
 
-    reshaped_uncl = remove_low_intensity(reshaped_uncl, 900)
     reshaped_uncl = remove_high_intensity(reshaped_uncl, 2000)
 
     uncl_training = reshaped_uncl
@@ -109,7 +110,8 @@ def construct_pvc_training_set():
     :return: An ndarray with all samples selected for PVC training class
     """
     pvc_img1 = open_image(
-        '../../../RU/data/Plastic Types - 224 Training Set/PVC1_2024-03-22_10-48-29/capture/PVC1_2024-03-22_10-48-29.hdr')
+        '../../../RU/data/Plastic Types - 224 Training Set/PVC1_2024-03-22_10-48-29/capture/'
+        'PVC1_2024-03-22_10-48-29.hdr')
     pvc1 = pvc_img1[:, :, :]
 
     pvc_areas = [pvc1[1300:1370, 140:200, 40:180], pvc1[860:930, 320:380, 40:180],
@@ -128,6 +130,35 @@ def construct_pvc_training_set():
     return pvc_training
 
 
+def construct_ps_training_set():
+    """
+    Build PS training set
+    :return: An ndarray with all samples selected for PS training class
+    """
+    ps_img1 = open_image('../../../RU/data/Plastic Types - 224 Training Set/PS_external/2131_hsi_2022_03_30_12_33_14_688/'
+                         '2131_hsi_2022_03_30_12_33_14_688.hdr')
+    ps1 = ps_img1[:, :, :]
+    ps_img2 = open_image('../../../RU/data/Plastic Types - 224 Training Set/PS_external/2131_hsi_2022_03_30_12_33_18_523/'
+                         '2131_hsi_2022_03_30_12_33_18_523.hdr')
+    ps2 = ps_img2[:, :, :]
+    ps_img3 = open_image('../../../RU/data/Plastic Types - 224 Training Set/PS_external/2131_hsi_2022_03_30_12_33_22_358/'
+                         '2131_hsi_2022_03_30_12_33_22_358.hdr')
+    ps3 = ps_img3[:, :, :]
+    ps_img4 = open_image('../../../RU/data/PS and PET/PS_2024-04-26_10-07-47/capture/PS_2024-04-26_10-07-47.hdr')
+    ps4 = ps_img4[:, :, :]
+
+    ps_areas = [ps1[::5, ::5, 40:180], ps2[::5, ::5, 40:180],
+                ps3[70:200:5, 220:380:5, 40:180], ps4[::3, 185:440:3, 40:180]]
+
+    reshaped_areas = [np.reshape(area, (area.shape[0] * area.shape[1], -1)) for area in ps_areas]
+    reshaped_ps = np.concatenate(reshaped_areas, axis=0)
+
+    reshaped_ps = remove_low_intensity(reshaped_ps, 300)
+
+    ps_training = reshaped_ps
+    return ps_training
+
+
 def construct_Xs(classes=None, shuffle=True):
     """
     Constructs Xs of the training set
@@ -142,7 +173,6 @@ def construct_Xs(classes=None, shuffle=True):
     if 'UNCL' in classes:
         X_uncl = construct_uncl_training_set()
         X_uncl = remove_high_intensity(X_uncl, 2100)
-        X_uncl = remove_low_intensity(X_uncl, 300)
         X_uncl = savgol(X_uncl)
         X_uncl = sum_training(X_uncl, shuffle=shuffle)
         Xs.append(X_uncl)
@@ -183,7 +213,12 @@ def construct_Xs(classes=None, shuffle=True):
         print("PVC Training Set shape: ", X_pvc.shape)
 
     if 'PS' in classes:
-        pass
+        X_ps = construct_ps_training_set()
+        X_ps = remove_low_intensity(X_ps, 300)
+        X_ps = savgol(X_ps)
+        X_ps = sum_training(X_ps, shuffle=shuffle)
+        Xs.append(X_ps)
+        print("PS Training Set shape: ", X_ps.shape)
 
     return Xs
 
@@ -288,7 +323,7 @@ def get_random_pixels(array_2D, n):
     return result
 
 
-classes = ['UNCL', 'PP', 'PE', 'PET', 'PVC']
+classes = ['UNCL', 'PP', 'PE', 'PET', 'PS']
 Xs = construct_Xs(classes)
 ys = construct_ys(Xs, classes)
 

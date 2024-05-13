@@ -1,5 +1,5 @@
-import matplotlib
-matplotlib.use("TkAgg")
+# import matplotlib
+# matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -21,7 +21,7 @@ def plot_spectra(array_2D, wavelengths, title='Spectra Plot'):
     wavelengths = list(map(float, wavelengths))
     samples = range(1, array_2D.shape[0] + 1)
 
-    plt.figure(figsize=(16, 5))
+    plt.figure(figsize=(16, 16))
 
     for i, sample in enumerate(samples):
         intensity_values = array_2D[i]
@@ -31,7 +31,7 @@ def plot_spectra(array_2D, wavelengths, title='Spectra Plot'):
     plt.ylabel('Intensity')
     plt.title(str(title))
     plt.grid(True)
-    plt.legend()
+    # plt.legend()
     plt.show()
 
 
@@ -61,9 +61,9 @@ def plot_predictions(y_pred, initial_shape, title='Predictions Plot'):
     :return: Nothing returned, predictions plot is shown
     """
     class_array = np.reshape(y_pred, initial_shape[:2])
-    class_colors = {'PP': '#6878c0', 'PVC': '#79b791', 'PE': '#ff9d5c', 'PET': '#b580c5'}
+    class_colors = {'PP': '#6878c0', 'PVC': '#79b791', 'PE': '#ff9d5c', 'PET': '#b580c5', 'PS': '#40e0d0'}
 
-    fig, ax = plt.subplots(figsize=(16, 10))
+    fig, ax = plt.subplots(figsize=(15, 17))
 
     mask = (class_array != 'UNCL')
     rows, cols = np.where(mask)

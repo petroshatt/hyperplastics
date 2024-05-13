@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
 from spectral import *
-
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 
 from preprocessing import *
@@ -26,8 +28,9 @@ if __name__ == '__main__':
     clf.fit(X_train.values, y_train.values.ravel())
     print("SVC Fitting Completed!")
 
-    test_img = np.load('data/test_img.npy')
-    test_img = test_img[::10, ::10, :]
+    test_img = open_image('../../RU/data/NET_2_Se_6-1-2021_2024-05-08_09-52-05/capture/'
+                          'NET_2_Se_6-1-2021_2024-05-08_09-52-05.hdr')
+    test_img = test_img[::4, ::4, 40:180]
     initial_shape = test_img.shape
 
     test_img = neighbouring_summation(test_img)

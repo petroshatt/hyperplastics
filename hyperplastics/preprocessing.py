@@ -1,6 +1,6 @@
 import numpy as np
 import pybaselines
-from scipy.signal import savgol_filter, convolve2d
+from scipy.signal import savgol_filter, convolve2d, find_peaks
 from skimage.restoration import denoise_wavelet
 
 
@@ -23,6 +23,42 @@ def neighbouring_summation(array_3D, window_size=5):
     for c in range(array_3D.shape[2]):
         output[:, :, c] = convolve2d(array_3D[:, :, c], kernel, mode='same', boundary='wrap')
     return output
+
+
+def peak_annonation_1D(array_1D):
+    array_1D = log_als_1D(array_1D)
+    array_1D = np.reshape(array_1D, 60)
+    peaks, _ = find_peaks(array_1D, height=(0.3*np.amax(array_1D)))
+
+    # plt.plot(array_1D)
+    # plt.plot(peaks, array_1D[peaks], "x")
+    # plt.plot(np.zeros_like(array_1D), "--", color="gray")
+    # plt.show()
+
+    output = []
+    output.append(len(peaks))
+
+    peak_intensities_sum = -1
+    peak_distances_sum = -1
+    relative_intensity = -1
+
+    if len(peaks) == 1:
+        peak_intensities_sum = array_1D[peaks[0]]
+        peak_distances_sum = 0
+        relative_intensity = 1
+    elif len(peaks) == 2:
+        peak_intensities_sum = (array_1D[peaks[0]] + array_1D[peaks[1]])
+        peak_distances_sum = (peaks[1] - peaks[0])
+        relative_intensity = (array_1D[peaks[0]] / array_1D[peaks[1]])
+
+    output.append(peak_intensities_sum)
+    output.append(peak_distances_sum)
+    output.append(relative_intensity)
+    return output
+
+
+def peak_annotation(array_2D):
+    return np.apply_along_axis(peak_annonation_1D, 1, array_2D)
 
 
 def savgol(array, window_length=5, polyorder=2, deriv=1):

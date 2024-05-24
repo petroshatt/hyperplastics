@@ -21,7 +21,7 @@ def plot_spectra(array_2D, wavelengths, title='Spectra Plot'):
     wavelengths = list(map(float, wavelengths))
     samples = range(1, array_2D.shape[0] + 1)
 
-    plt.figure(figsize=(16, 16))
+    plt.figure(figsize=(16, 3))
 
     for i, sample in enumerate(samples):
         intensity_values = array_2D[i]
@@ -47,6 +47,7 @@ def plot_mean_image(array_3D):
 
     plt.imshow(data_means, interpolation='nearest')
     plt.title('Mean Image')
+    plt.tight_layout()
     # plt.colorbar()
 
     plt.show()
@@ -61,26 +62,34 @@ def plot_predictions(y_pred, initial_shape, title='Predictions Plot'):
     :return: Nothing returned, predictions plot is shown
     """
     class_array = np.reshape(y_pred, initial_shape[:2])
-    class_colors = {'PP': '#6878c0', 'PVC': '#79b791', 'PE': '#ff9d5c', 'PET': '#b580c5', 'PS': '#40e0d0'}
+    # class_colors = {'PP': '#6878c0', 'PVC': '#79b791', 'PE': '#ff9d5c', 'PET': '#b580c5', 'PS': '#40e0d0'}
+    class_colors = {'PP': '#6878c0', 'PE': '#ff9d5c', 'PET': '#b580c5', 'PS': '#40e0d0'}
 
-    fig, ax = plt.subplots(figsize=(15, 17))
+    # class_array[:25, :80] = 'UNCL'
+    # class_array[100:, :80] = 'UNCL'
+    # class_array[:25, 100:] = 'UNCL'
+    # class_array[100:, 100:] = 'UNCL'
+
+    fig, ax = plt.subplots(figsize=(17, ((17*initial_shape[0]) / initial_shape[1])))
 
     mask = (class_array != 'UNCL')
     rows, cols = np.where(mask)
     colors = np.array([class_colors[class_array[r, c]] for r, c in zip(rows, cols)])
     scatter = ax.scatter(cols, rows, c=colors)
 
+    plt.xlim(0, initial_shape[1])
+    plt.ylim(0, initial_shape[0])
     plt.gca().invert_yaxis()
 
     legend_handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color,
-                                 markersize=10, label=class_label) for class_label, color in class_colors.items()]
+                                 markersize=15, label=class_label) for class_label, color in class_colors.items()]
 
     plt.title(str(title))
     plt.legend(handles=legend_handles)
 
-    annot = ax.annotate("", xy=(0,0), xytext=(20,20), textcoords="offset points",
-                    bbox=dict(boxstyle="round", fc="w"),
-                    arrowprops=dict(arrowstyle="->"))
+    annot = ax.annotate("", xy=(0, 0), xytext=(20, 20), textcoords="offset points",
+                        bbox=dict(boxstyle="round", fc="w"),
+                        arrowprops=dict(arrowstyle="->"))
     annot.set_visible(False)
 
     def update_annot(event):

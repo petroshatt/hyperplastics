@@ -1,18 +1,9 @@
 import numpy as np
-from scipy.signal import savgol_filter
+from scipy.signal import savgol_filter, find_peaks
 from spectral import *
 
-
-def savgol(array, window_length=5, polyorder=2, deriv=1):
-    """
-    Savitzky-Golay filter
-    :param array: Array (can be one or two dimensions) for the filter to be applied
-    :param window_length: Window length
-    :param polyorder: Polynomial order
-    :param deriv: Derivative (1st or 2nd)
-    :return: Array after applying the filter
-    """
-    return savgol_filter(array, window_length=window_length, polyorder=polyorder, deriv=deriv)
+from hyperplastics.preprocessing import *
+from hyperplastics.peakann import *
 
 
 def construct_uncl_training_set():
@@ -175,6 +166,10 @@ def construct_Xs(classes=None, shuffle=True):
         X_uncl = remove_high_intensity(X_uncl, 2100)
         X_uncl = savgol(X_uncl)
         X_uncl = sum_training(X_uncl, shuffle=shuffle)
+
+        # X_uncl = X_uncl[:, :60]
+        # X_uncl = peak_annotation(X_uncl)
+
         Xs.append(X_uncl)
         print("UNCL Training Set shape: ", X_uncl.shape)
 
@@ -184,6 +179,10 @@ def construct_Xs(classes=None, shuffle=True):
         X_pp = remove_low_intensity(X_pp, 300)
         X_pp = savgol(X_pp)
         X_pp = sum_training(X_pp, shuffle=shuffle)
+
+        # X_pp = X_pp[:, :60]
+        # X_pp = peak_annotation(X_pp)
+
         Xs.append(X_pp)
         print("PP Training Set shape: ", X_pp.shape)
 
@@ -193,6 +192,10 @@ def construct_Xs(classes=None, shuffle=True):
         X_pe = remove_low_intensity(X_pe, 300)
         X_pe = savgol(X_pe)
         X_pe = sum_training(X_pe, shuffle=shuffle)
+
+        # X_pe = X_pe[:, :60]
+        # X_pe = peak_annotation(X_pe)
+
         Xs.append(X_pe)
         print("PE Training Set shape: ", X_pe.shape)
 
@@ -201,6 +204,10 @@ def construct_Xs(classes=None, shuffle=True):
         X_pet = remove_low_intensity(X_pet, 300)
         X_pet = savgol(X_pet)
         X_pet = sum_training(X_pet, shuffle=shuffle)
+
+        # X_pet = X_pet[:, :60]
+        # X_pet = peak_annotation(X_pet)
+
         Xs.append(X_pet)
         print("PET Training Set shape: ", X_pet.shape)
 
@@ -209,6 +216,10 @@ def construct_Xs(classes=None, shuffle=True):
         X_pvc = remove_low_intensity(X_pvc, 300)
         X_pvc = savgol(X_pvc)
         X_pvc = sum_training(X_pvc, shuffle=shuffle)
+
+        # X_pvc = X_pvc[:, :60]
+        # X_pvc = peak_annotation(X_pvc)
+
         Xs.append(X_pvc)
         print("PVC Training Set shape: ", X_pvc.shape)
 
@@ -217,6 +228,10 @@ def construct_Xs(classes=None, shuffle=True):
         X_ps = remove_low_intensity(X_ps, 300)
         X_ps = savgol(X_ps)
         X_ps = sum_training(X_ps, shuffle=shuffle)
+
+        # X_ps = X_ps[:, :60]
+        # X_ps = peak_annotation(X_ps)
+
         Xs.append(X_ps)
         print("PS Training Set shape: ", X_ps.shape)
 
@@ -329,5 +344,5 @@ ys = construct_ys(Xs, classes)
 
 X_train = np.concatenate(Xs)
 y_train = np.concatenate(ys)
-np.save('X_train', X_train)
-np.save('y_train', y_train)
+np.save('X_train.npy', X_train)
+np.save('y_train.npy', y_train)

@@ -82,7 +82,7 @@ def plot_predictions(y_pred, initial_shape, title='Predictions Plot'):
     plt.gca().invert_yaxis()
 
     legend_handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color,
-                                 markersize=15, label=class_label) for class_label, color in class_colors.items()]
+                                 markersize=25, label=class_label) for class_label, color in class_colors.items()]
 
     plt.title(str(title))
     plt.legend(handles=legend_handles)
@@ -113,4 +113,44 @@ def plot_predictions(y_pred, initial_shape, title='Predictions Plot'):
 
     fig.canvas.mpl_connect("motion_notify_event", update_annot)
     plt.pause(0.01)
+    plt.show()
+
+
+def plot_pie(y_pred, title='Percentage of Each Class in Predictions'):
+    """
+    Plot pie chart that shows percentage of each class in the predictions
+    :param y_pred: The predictions array returned by the model
+    :param title:
+    :return: Nothing returned, pie chart plot is shown
+    """
+    class_colors = {'PP': '#6878c0', 'PE': '#ff9d5c', 'PET': '#b580c5', 'PS': '#40e0d0', 'UNCL': '#000000'}
+
+    unique, counts = np.unique(y_pred, return_counts=True)
+    class_counts = dict(zip(unique, counts))
+
+    total_counts = np.sum(counts)
+    percentages = {cls: (count / total_counts) * 100 for cls, count in class_counts.items()}
+
+    unclassified_count = class_counts.get('UNCL', 0)
+    classified_count = total_counts - unclassified_count
+    other_vs_polymers_labels = ['Other', 'Polymers']
+    other_vs_polymers_counts = [unclassified_count, classified_count]
+    other_vs_polymers_colors = ['#444444', '#acd8a7']
+
+    detailed_labels = [cls for cls in unique if cls != 'UNCL']
+    detailed_counts = [class_counts[cls] for cls in detailed_labels]
+    detailed_percentages = [percentages[cls] for cls in detailed_labels]
+    detailed_colors = [class_colors[cls] for cls in detailed_labels]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
+
+    ax1.pie(other_vs_polymers_counts, labels=other_vs_polymers_labels, colors=other_vs_polymers_colors,
+            autopct='%1.1f%%', startangle=140)
+    ax1.set_title('Polymers vs. Other')
+
+    ax2.pie(detailed_percentages, labels=detailed_labels, colors=detailed_colors, autopct='%1.1f%%', startangle=140)
+    ax2.set_title('Percentage of Each Class in Predictions')
+
+    fig.tight_layout(rect=[0, 0, 1, 0.95])
+    plt.title(str(title))
     plt.show()

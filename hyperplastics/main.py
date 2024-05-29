@@ -28,9 +28,11 @@ if __name__ == '__main__':
     clf.fit(X_train.values, y_train.values.ravel())
     print("SVC Fitting Completed!")
 
-    # test_img = open_image('../../RU/data/6_1_NET3_2024-05-23_12-33-53/capture/6_1_NET3_2024-05-23_12-33-53.hdr')
-    test_img = np.load('data/6_1/NET1_6_1.npy')
-    test_img = test_img[::6, ::6, :]
+    filepath = 'data/6_1/NET3_6_1.npy'
+    plot_title = f"{filepath.split('/')[2].split('_')[0]} from {filepath.split('/')[1]}"
+
+    test_img = np.load(filepath)
+    test_img = test_img[::10, ::10, :]
     initial_shape = test_img.shape
 
     test_img = neighbouring_summation(test_img)
@@ -45,4 +47,6 @@ if __name__ == '__main__':
     unique, counts = np.unique(y_pred, return_counts=True)
     print(dict(zip(unique, counts)))
 
-    plot_predictions(y_pred, initial_shape, title='7x7 NS + SG + AreaNorm / SVC Predictions on 6/1 NET1')
+    plot_predictions(y_pred, initial_shape,
+                     title='5x5 NS + SG + AreaNorm / SVC Predictions on ' + plot_title)
+    plot_pie(y_pred, title='Quantification of Prediction on ' + plot_title)

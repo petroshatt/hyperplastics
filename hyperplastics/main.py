@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.neural_network import MLPClassifier
 from spectral import *
 from sklearn.svm import SVC
 
@@ -16,21 +17,20 @@ if __name__ == '__main__':
     wavelengths = wl_img.metadata['wavelength'][40:180]
     peakann_columns = ['Num of Peaks', 'Peak Int Sum', 'Peak Dist Sum', 'Rel Int']
 
-    X_train = np.load('data/X_train.npy')
-    y_train = np.load('data/y_train.npy')
+    X_train = np.load('data/training/X_train.npy')
+    y_train = np.load('data/training/y_train.npy')
 
     X_train = area_normalization(X_train)
 
     X_train = pd.DataFrame(data=X_train, index=range(1, X_train.shape[0] + 1), columns=wavelengths)
     y_train = pd.DataFrame(data=y_train, index=range(1, y_train.shape[0] + 1), columns=['Class'])
 
-    clf = SVC(gamma='auto')
+    # clf = SVC(gamma='auto')
+    clf = MLPClassifier(max_iter=1000)
     clf.fit(X_train.values, y_train.values.ravel())
-    print("SVC Fitting Completed!")
+    print("MLP Fitting Completed!")
 
-    filepath = 'data/6_1/NET3_6_1.npy'
-    plot_title = f"{filepath.split('/')[2].split('_')[0]} from {filepath.split('/')[1]}"
-
+    filepath = 'data/5_1/1E/NET1_5_1.npy'
     test_img = np.load(filepath)
     test_img = test_img[::10, ::10, :]
     initial_shape = test_img.shape
@@ -48,5 +48,5 @@ if __name__ == '__main__':
     print(dict(zip(unique, counts)))
 
     plot_predictions(y_pred, initial_shape,
-                     title='5x5 NS + SG + AreaNorm / SVC Predictions on ' + plot_title)
-    plot_pie(y_pred, title='Quantification of Prediction on ' + plot_title)
+                     title='5x5 NS + SG + AreaNorm / SVC Predictions on ' + get_plot_title(filepath))
+    plot_pie(y_pred, title='Quantification of Prediction on ' + get_plot_title(filepath))

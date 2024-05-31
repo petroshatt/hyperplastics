@@ -344,5 +344,5 @@ ys = construct_ys(Xs, classes)
 
 X_train = np.concatenate(Xs)
 y_train = np.concatenate(ys)
-np.save('X_train.npy', X_train)
-np.save('y_train.npy', y_train)
+np.save('training/X_train.npy', X_train)
+np.save('training/y_train.npy', y_train)
